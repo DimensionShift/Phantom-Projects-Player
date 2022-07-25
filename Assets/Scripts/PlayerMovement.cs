@@ -20,11 +20,11 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        horizontalMove = Input.GetAxisRaw("Horizontal") * speed;
+        horizontalMove = Input.GetAxisRaw("Horizontal") * speed;                // Horizontal movement of the player
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump"))                                        // Check to see if the player has pressed the jump button
         {
-            jump = true;
+            jump = true;                                                        // Set jump to true to prevent further jumps
         }
     }
 
@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
     {
         #region Player Movement
 
-        controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
+        controller.Move(horizontalMove * Time.fixedDeltaTime, jump);            // Player movement
         jump = false;
 
         #endregion

@@ -24,19 +24,19 @@ public class CharacterController2D : MonoBehaviour
 	[Header("Jump")]
 	[Space]
 	[Range(1, 10)] public float jumpVelocity;
-	public float fallMultiplier = 2.5f;
-	public float lowJumpMultiplier = 2f;
-	[SerializeField] private float coyoteTime = 0.2f;
+	public float fallMultiplier = 2.5f;											// Gravity affecting player when they high jump
+	public float lowJumpMultiplier = 2f;										// Gravity affecting player when they low jump
+	[SerializeField] private float coyoteTime = 0.2f;							// Time given for the player to jump if they fall off a tile/platform 
 	private float coyoteTimeCounter;
 
 	[Header("Player Direction")]
 	[Space]
-	public bool facingRight = true;  // For determining which way the player is currently facing.
+	public bool facingRight = true;												// For determining which way the player is currently facing.
 
 	[Header("Player Attacks")]
 	[Space]
-	[SerializeField] GameObject weaponProjectilePrefab;
-	[SerializeField] float attackInterval = 0.5f;
+	[SerializeField] GameObject weaponProjectilePrefab;							// Load projectile sprite
+	[SerializeField] float attackInterval = 0.5f;								// Time before next projectile is spawned 
 	float attackTimer = 0;
 
 	private void Awake()
@@ -48,12 +48,12 @@ public class CharacterController2D : MonoBehaviour
     {
 		if (attackTimer <= 0)
 		{
-			attackTimer = 0;
-			Attack();
+			attackTimer = 0;													// Set attack timer to 0 instead of going into negatives
+			Attack();															// Player Attack Method
 		}
 		else
 		{
-			attackTimer -= Time.deltaTime;
+			attackTimer -= Time.deltaTime;										// Recude attack timer every second so the next attack can be peformed
 		}
 	}
 
@@ -73,22 +73,22 @@ public class CharacterController2D : MonoBehaviour
 			}
 		}
 
-		if (grounded)
-        {
-			coyoteTimeCounter = coyoteTime;
-        }
-        else
-        {
-			coyoteTimeCounter -= Time.deltaTime;
-        }
-
 		if (rb.velocity.y < 0)
 		{
-			rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+			rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;     // Gravity affecting the player after they jump
 		}
 		else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
 		{
-			rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+			rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;  // If jump button isn't being held carry out low jump
+		}
+
+		if (grounded)
+		{
+			coyoteTimeCounter = coyoteTime;                                     // Set Coyote Timer timer
+		}
+		else
+		{
+			coyoteTimeCounter -= Time.deltaTime;                                // Reduce timer every second
 		}
 	}
 
@@ -154,13 +154,13 @@ public class CharacterController2D : MonoBehaviour
 			}
 		}
 		// If the player should jump...
-		if (coyoteTimeCounter > 0 && jump)
+		if (coyoteTimeCounter > 0 && jump)										// Check to see if the player still has time to jump (Coyote Time) and the jump button is pressed
 		{
 			// Add a vertical force to the player.
 			grounded = false;
-			rb.velocity = Vector2.up * jumpVelocity;
+			rb.velocity = Vector2.up * jumpVelocity;							// Add upward force to the player to make them jump
 
-			coyoteTimeCounter = 0f;
+			coyoteTimeCounter = 0f;												// Reset Coyote Time timer for the next jump check
 		}
 	}
 
@@ -171,18 +171,18 @@ public class CharacterController2D : MonoBehaviour
 		{
 			if (!facingRight)
 			{
-				SpawnProjectile(-0.5f, Vector2.left);
+				SpawnProjectile(-0.5f, Vector2.left);							// If the player presses the left mouse button and they are facing to the left, projectiles will be launched to the left (-0.5f)
 			}
 			else
 			{
-				SpawnProjectile(0.5f, Vector2.right);
+				SpawnProjectile(0.5f, Vector2.right);							// Else the player is facing right and so projectiles will be launched to the right (0.5f)
 			}
 
-			attackTimer = attackInterval;
+			attackTimer = attackInterval;										// Reset timer between each attack to prevent continous attack inputs
 		}
 	}
 
-	private void SpawnProjectile(float num, Vector2 direction)
+	private void SpawnProjectile(float num, Vector2 direction)					// Method to instantiate projectile and launch in the given direction
     {
 		Vector2 spawnWeaponProjectile = new Vector2(transform.position.x + num, transform.position.y);
 		GameObject instance = Instantiate(weaponProjectilePrefab, spawnWeaponProjectile, Quaternion.identity);
